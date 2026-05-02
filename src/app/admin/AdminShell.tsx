@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import "./admin.css";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Overview", icon: "📊" },
@@ -40,30 +41,34 @@ export function AdminShell({
   const pathname = usePathname();
   const router = useRouter();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const navigate = (href: string) => {
+    router.push(href);
+    setSidebarOpen(false);
+  };
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: C.bg, color: C.text }}>
-      {/* Sidebar */}
-      <aside
-        style={{
-          width: 260,
-          background: C.sidebar,
-          borderRight: `1px solid ${C.cardBorder}`,
-          display: "flex",
-          flexDirection: "column",
-          flexShrink: 0,
-          position: "sticky",
-          top: 0,
-          height: "100vh",
-        }}
+      {/* Mobile hamburger */}
+      <button
+        className="admin-hamburger"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        aria-label="Toggle menu"
       >
+        {sidebarOpen ? "✕" : "☰"}
+      </button>
+
+      {/* Mobile overlay */}
+      <div
+        className={`admin-overlay${sidebarOpen ? " open" : ""}`}
+        onClick={() => setSidebarOpen(false)}
+      />
+
+      {/* Sidebar */}
+      <aside className={`admin-sidebar${sidebarOpen ? " open" : ""}`}>
         {/* Logo */}
-        <div
-          style={{
-            padding: "24px 20px",
-            borderBottom: `1px solid ${C.cardBorder}`,
-          }}
-        >
+        <div style={{ padding: "24px 20px", borderBottom: `1px solid ${C.cardBorder}` }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div
               style={{
@@ -77,6 +82,7 @@ export function AdminShell({
                 fontSize: 18,
                 fontWeight: 800,
                 color: "#fff",
+                flexShrink: 0,
               }}
             >
               S
@@ -109,7 +115,7 @@ export function AdminShell({
             return (
               <button
                 key={item.href}
-                onClick={() => router.push(item.href)}
+                onClick={() => navigate(item.href)}
                 onMouseEnter={() => setHoveredItem(item.href)}
                 onMouseLeave={() => setHoveredItem(null)}
                 style={{
@@ -156,12 +162,7 @@ export function AdminShell({
         </nav>
 
         {/* Admin Info */}
-        <div
-          style={{
-            padding: "16px 16px 20px",
-            borderTop: `1px solid ${C.cardBorder}`,
-          }}
-        >
+        <div style={{ padding: "16px 16px 20px", borderTop: `1px solid ${C.cardBorder}` }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div
               style={{
@@ -175,11 +176,12 @@ export function AdminShell({
                 fontSize: 12,
                 fontWeight: 800,
                 color: "#fff",
+                flexShrink: 0,
               }}
             >
               {userName?.[0]?.toUpperCase() || "A"}
             </div>
-            <div style={{ overflow: "hidden" }}>
+            <div style={{ overflow: "hidden", minWidth: 0 }}>
               <div style={{ fontSize: 12, fontWeight: 600, color: C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {userName}
               </div>
@@ -189,7 +191,7 @@ export function AdminShell({
             </div>
           </div>
           <button
-            onClick={() => router.push("/dashboard")}
+            onClick={() => navigate("/dashboard")}
             style={{
               marginTop: 12,
               width: "100%",
@@ -210,14 +212,7 @@ export function AdminShell({
       </aside>
 
       {/* Main Content */}
-      <main
-        style={{
-          flex: 1,
-          padding: "28px 36px",
-          overflowY: "auto",
-          minHeight: "100vh",
-        }}
-      >
+      <main className="admin-main">
         {children}
       </main>
     </div>

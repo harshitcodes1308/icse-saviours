@@ -81,11 +81,13 @@ export function AdminLogin() {
       {/* Login Card */}
       <div
         style={{
-          width: 420,
+          width: "100%",
+          maxWidth: 420,
+          margin: "0 16px",
           background: "rgba(17,17,24,0.9)",
           border: "1px solid #1a1a2e",
           borderRadius: 20,
-          padding: "40px 36px",
+          padding: "40px 28px",
           backdropFilter: "blur(20px)",
           position: "relative",
         }}

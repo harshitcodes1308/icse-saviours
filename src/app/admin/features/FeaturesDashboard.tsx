@@ -53,7 +53,6 @@ interface FeatureData {
 }
 
 export function FeaturesDashboard({ data }: { data: FeatureData }) {
-  // Sort features by usage
   const sortedFeatures = [...data.aiUsageByFeature].sort((a, b) => b.count - a.count);
   const chartData = sortedFeatures.map((f) => ({
     name: FEATURE_LABELS[f.feature]?.label || f.feature,
@@ -67,8 +66,9 @@ export function FeaturesDashboard({ data }: { data: FeatureData }) {
 
   return (
     <div>
-      <div style={{ marginBottom: 28 }}>
+      <div style={{ marginBottom: 24 }}>
         <h1
+          className="admin-page-title"
           style={{
             fontSize: 26,
             fontWeight: 800,
@@ -86,7 +86,7 @@ export function FeaturesDashboard({ data }: { data: FeatureData }) {
       </div>
 
       {/* Platform Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 14, marginBottom: 24 }}>
+      <div className="admin-kpi-grid-6">
         {[
           { label: "AI Calls", value: totalAICalls.toLocaleString(), icon: "🧠", color: C.accent },
           { label: "Tokens Used", value: `${Math.round(totalTokens / 1000)}K`, icon: "🔤", color: C.yellow },
@@ -101,7 +101,7 @@ export function FeaturesDashboard({ data }: { data: FeatureData }) {
               background: C.card,
               border: `1px solid ${C.cardBorder}`,
               borderRadius: 14,
-              padding: "16px 18px",
+              padding: "16px 16px",
               position: "relative",
               overflow: "hidden",
             }}
@@ -118,32 +118,32 @@ export function FeaturesDashboard({ data }: { data: FeatureData }) {
                 pointerEvents: "none",
               }}
             />
-            <div style={{ fontSize: 11, color: C.textMid, fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>
+            <div className="admin-stat-label" style={{ fontSize: 10, color: C.textMid, fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>
               {s.icon} {s.label}
             </div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: s.color, letterSpacing: -0.5 }}>{s.value}</div>
+            <div className="admin-stat-value" style={{ fontSize: 22, fontWeight: 800, color: s.color, letterSpacing: -0.5 }}>{s.value}</div>
           </div>
         ))}
       </div>
 
       {/* Charts Row */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
+      <div className="admin-charts-row-half" style={{ marginBottom: 24 }}>
         {/* Feature Rankings */}
         <div
           style={{
             background: C.card,
             border: `1px solid ${C.cardBorder}`,
             borderRadius: 16,
-            padding: "20px 24px",
+            padding: "20px 20px",
           }}
         >
           <h3 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px", color: C.text }}>🏆 AI Feature Rankings</h3>
-          <div style={{ height: 300 }}>
+          <div style={{ height: 300, width: "100%" }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke="#1a1a2e" horizontal={false} />
                 <XAxis type="number" stroke={C.textDim} fontSize={10} />
-                <YAxis dataKey="name" type="category" stroke={C.textDim} fontSize={10} width={120} />
+                <YAxis dataKey="name" type="category" stroke={C.textDim} fontSize={10} width={100} />
                 <Tooltip
                   contentStyle={{ background: C.surface, border: `1px solid ${C.cardBorder}`, borderRadius: 10, fontSize: 12, color: C.text }}
                 />
@@ -163,11 +163,11 @@ export function FeaturesDashboard({ data }: { data: FeatureData }) {
             background: C.card,
             border: `1px solid ${C.cardBorder}`,
             borderRadius: 16,
-            padding: "20px 24px",
+            padding: "20px 20px",
           }}
         >
           <h3 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px", color: C.text }}>📈 AI Usage (30 Days)</h3>
-          <div style={{ height: 300 }}>
+          <div style={{ height: 300, width: "100%" }}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data.aiUsageTrend}>
                 <defs>
@@ -207,74 +207,77 @@ export function FeaturesDashboard({ data }: { data: FeatureData }) {
         <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.cardBorder}` }}>
           <h3 style={{ fontSize: 14, fontWeight: 700, margin: 0, color: C.text }}>📋 Detailed Breakdown</h3>
         </div>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ background: C.surface }}>
-              {["Feature", "API Calls", "Tokens Used", "% of Total"].map((h) => (
-                <th
-                  key={h}
-                  style={{
-                    padding: "10px 16px",
-                    textAlign: "left",
-                    fontSize: 11,
-                    fontWeight: 700,
-                    color: C.accent,
-                    textTransform: "uppercase",
-                    letterSpacing: 0.6,
-                    borderBottom: `1px solid ${C.cardBorder}`,
-                  }}
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {sortedFeatures.map((f) => {
-              const info = FEATURE_LABELS[f.feature] || { label: f.feature, icon: "🔹", color: C.textMid };
-              const pct = totalAICalls > 0 ? ((f.count / totalAICalls) * 100).toFixed(1) : "0";
-              return (
-                <tr key={f.feature} style={{ borderBottom: `1px solid ${C.cardBorder}` }}>
-                  <td style={{ padding: "11px 16px", fontSize: 13, fontWeight: 600, color: C.text }}>
-                    <span style={{ marginRight: 8 }}>{info.icon}</span>
-                    {info.label}
-                  </td>
-                  <td style={{ padding: "11px 16px", fontSize: 13, fontWeight: 700, color: info.color }}>
-                    {f.count.toLocaleString()}
-                  </td>
-                  <td style={{ padding: "11px 16px", fontSize: 13, color: C.textMid }}>
-                    {f.tokens.toLocaleString()}
-                  </td>
-                  <td style={{ padding: "11px 16px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <div
-                        style={{
-                          width: 60,
-                          height: 6,
-                          borderRadius: 3,
-                          background: "rgba(255,255,255,0.06)",
-                          overflow: "hidden",
-                        }}
-                      >
+        <div className="admin-table-wrap">
+          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 500 }}>
+            <thead>
+              <tr style={{ background: C.surface }}>
+                {["Feature", "API Calls", "Tokens Used", "% of Total"].map((h) => (
+                  <th
+                    key={h}
+                    style={{
+                      padding: "10px 16px",
+                      textAlign: "left",
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: C.accent,
+                      textTransform: "uppercase",
+                      letterSpacing: 0.6,
+                      borderBottom: `1px solid ${C.cardBorder}`,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {sortedFeatures.map((f) => {
+                const info = FEATURE_LABELS[f.feature] || { label: f.feature, icon: "🔹", color: C.textMid };
+                const pct = totalAICalls > 0 ? ((f.count / totalAICalls) * 100).toFixed(1) : "0";
+                return (
+                  <tr key={f.feature} style={{ borderBottom: `1px solid ${C.cardBorder}` }}>
+                    <td style={{ padding: "11px 16px", fontSize: 13, fontWeight: 600, color: C.text, whiteSpace: "nowrap" }}>
+                      <span style={{ marginRight: 8 }}>{info.icon}</span>
+                      {info.label}
+                    </td>
+                    <td style={{ padding: "11px 16px", fontSize: 13, fontWeight: 700, color: info.color }}>
+                      {f.count.toLocaleString()}
+                    </td>
+                    <td style={{ padding: "11px 16px", fontSize: 13, color: C.textMid }}>
+                      {f.tokens.toLocaleString()}
+                    </td>
+                    <td style={{ padding: "11px 16px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                         <div
                           style={{
-                            height: "100%",
-                            width: `${pct}%`,
+                            width: 60,
+                            height: 6,
                             borderRadius: 3,
-                            background: info.color,
+                            background: "rgba(255,255,255,0.06)",
+                            overflow: "hidden",
+                            flexShrink: 0,
                           }}
-                        />
+                        >
+                          <div
+                            style={{
+                              height: "100%",
+                              width: `${pct}%`,
+                              borderRadius: 3,
+                              background: info.color,
+                            }}
+                          />
+                        </div>
+                        <span style={{ fontSize: 12, color: C.textMid, fontWeight: 600 }}>{pct}%</span>
                       </div>
-                      <span style={{ fontSize: 12, color: C.textMid, fontWeight: 600 }}>{pct}%</span>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
 }
-

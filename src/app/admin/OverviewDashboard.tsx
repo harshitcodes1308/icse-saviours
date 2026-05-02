@@ -65,7 +65,7 @@ function StatCard({
         background: C.card,
         border: `1px solid ${C.cardBorder}`,
         borderRadius: 16,
-        padding: "22px 24px",
+        padding: "20px 20px",
         position: "relative",
         overflow: "hidden",
       }}
@@ -82,14 +82,14 @@ function StatCard({
           pointerEvents: "none",
         }}
       />
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-        <span style={{ fontSize: 12, fontWeight: 600, color: C.textMid, textTransform: "uppercase", letterSpacing: 0.8 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
+        <span className="admin-stat-label" style={{ fontSize: 11, fontWeight: 600, color: C.textMid, textTransform: "uppercase", letterSpacing: 0.8 }}>
           {label}
         </span>
-        <span style={{ fontSize: 20 }}>{icon}</span>
+        <span style={{ fontSize: 18 }}>{icon}</span>
       </div>
-      <div style={{ fontSize: 32, fontWeight: 800, color, letterSpacing: -1, lineHeight: 1 }}>{value}</div>
-      {subtext && <div style={{ fontSize: 12, color: C.textDim, marginTop: 8, fontWeight: 500 }}>{subtext}</div>}
+      <div className="admin-stat-value" style={{ fontSize: 30, fontWeight: 800, color, letterSpacing: -1, lineHeight: 1 }}>{value}</div>
+      {subtext && <div style={{ fontSize: 11, color: C.textDim, marginTop: 8, fontWeight: 500 }}>{subtext}</div>}
     </div>
   );
 }
@@ -98,8 +98,9 @@ export function OverviewDashboard({ stats }: { stats: OverviewStats }) {
   return (
     <div>
       {/* Header */}
-      <div style={{ marginBottom: 28 }}>
+      <div style={{ marginBottom: 24 }}>
         <h1
+          className="admin-page-title"
           style={{
             fontSize: 26,
             fontWeight: 800,
@@ -117,15 +118,8 @@ export function OverviewDashboard({ stats }: { stats: OverviewStats }) {
         </p>
       </div>
 
-      {/* KPI Grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 16,
-          marginBottom: 24,
-        }}
-      >
+      {/* Primary KPIs */}
+      <div className="admin-kpi-grid-4">
         <StatCard icon="👥" label="Total Users" value={stats.totalUsers} color={C.accent} subtext={`+${stats.usersToday} today`} />
         <StatCard icon="💎" label="Paid Users" value={stats.paidUsers} color={C.green} subtext={`${stats.conversionRate}% conversion`} />
         <StatCard icon="💰" label="Revenue" value={`₹${stats.estimatedRevenue.toLocaleString("en-IN")}`} color={C.yellow} subtext="@ ₹99/user" />
@@ -133,14 +127,7 @@ export function OverviewDashboard({ stats }: { stats: OverviewStats }) {
       </div>
 
       {/* Secondary Stats */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 16,
-          marginBottom: 24,
-        }}
-      >
+      <div className="admin-kpi-grid-4">
         <StatCard icon="📅" label="Today" value={stats.usersToday} color={C.blue} subtext="New signups" />
         <StatCard icon="📈" label="This Week" value={stats.usersWeek} color={C.accent} subtext="New signups" />
         <StatCard icon="📊" label="This Month" value={stats.usersMonth} color={C.pink} subtext="New signups" />
@@ -148,20 +135,20 @@ export function OverviewDashboard({ stats }: { stats: OverviewStats }) {
       </div>
 
       {/* Charts Row */}
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16 }}>
+      <div className="admin-charts-row">
         {/* Signup Trend */}
         <div
           style={{
             background: C.card,
             border: `1px solid ${C.cardBorder}`,
             borderRadius: 16,
-            padding: "20px 24px",
+            padding: "20px 20px",
           }}
         >
           <h3 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px", color: C.text }}>
             📈 User Growth (30 Days)
           </h3>
-          <div style={{ height: 280 }}>
+          <div style={{ height: 280, width: "100%" }}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={stats.signupTrend}>
                 <defs>
@@ -200,7 +187,7 @@ export function OverviewDashboard({ stats }: { stats: OverviewStats }) {
             background: C.card,
             border: `1px solid ${C.cardBorder}`,
             borderRadius: 16,
-            padding: "20px 24px",
+            padding: "20px 20px",
           }}
         >
           <h3 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px", color: C.text }}>
@@ -239,7 +226,7 @@ export function OverviewDashboard({ stats }: { stats: OverviewStats }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 8 }}>
             {stats.authProviders.map((p, i) => (
               <div key={p.provider} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{ width: 10, height: 10, borderRadius: 3, background: PIE_COLORS[i % PIE_COLORS.length] }} />
+                <div style={{ width: 10, height: 10, borderRadius: 3, background: PIE_COLORS[i % PIE_COLORS.length], flexShrink: 0 }} />
                 <span style={{ fontSize: 12, color: C.textMid, flex: 1, textTransform: "capitalize" }}>
                   {p.provider}
                 </span>

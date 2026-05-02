@@ -49,7 +49,7 @@ function StatCard({
         background: C.card,
         border: `1px solid ${C.cardBorder}`,
         borderRadius: 16,
-        padding: "22px 24px",
+        padding: "20px 20px",
         position: "relative",
         overflow: "hidden",
       }}
@@ -66,14 +66,14 @@ function StatCard({
           pointerEvents: "none",
         }}
       />
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-        <span style={{ fontSize: 12, fontWeight: 600, color: C.textMid, textTransform: "uppercase", letterSpacing: 0.8 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
+        <span className="admin-stat-label" style={{ fontSize: 11, fontWeight: 600, color: C.textMid, textTransform: "uppercase", letterSpacing: 0.8 }}>
           {label}
         </span>
-        <span style={{ fontSize: 20 }}>{icon}</span>
+        <span style={{ fontSize: 18 }}>{icon}</span>
       </div>
-      <div style={{ fontSize: 32, fontWeight: 800, color, letterSpacing: -1, lineHeight: 1 }}>{value}</div>
-      {subtext && <div style={{ fontSize: 12, color: C.textDim, marginTop: 8, fontWeight: 500 }}>{subtext}</div>}
+      <div className="admin-stat-value" style={{ fontSize: 30, fontWeight: 800, color, letterSpacing: -1, lineHeight: 1 }}>{value}</div>
+      {subtext && <div style={{ fontSize: 11, color: C.textDim, marginTop: 8, fontWeight: 500 }}>{subtext}</div>}
     </div>
   );
 }
@@ -89,8 +89,9 @@ export function RevenueDashboard({
 }) {
   return (
     <div>
-      <div style={{ marginBottom: 28 }}>
+      <div style={{ marginBottom: 24 }}>
         <h1
+          className="admin-page-title"
           style={{
             fontSize: 26,
             fontWeight: 800,
@@ -108,7 +109,7 @@ export function RevenueDashboard({
       </div>
 
       {/* KPI Row */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
+      <div className="admin-kpi-grid-4">
         <StatCard icon="💰" label="Total Revenue" value={`₹${revenue.totalRevenue.toLocaleString("en-IN")}`} color={C.yellow} subtext="Estimated from paid users" />
         <StatCard icon="💎" label="Paid Users" value={revenue.paidUsers} color={C.green} subtext={`Out of ${totalUsers} total`} />
         <StatCard icon="📊" label="Conversion Rate" value={`${conversionRate}%`} color={C.accent} subtext="Free → Paid" />
@@ -116,18 +117,18 @@ export function RevenueDashboard({
       </div>
 
       {/* Charts */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+      <div className="admin-charts-row-half">
         {/* Cumulative Revenue */}
         <div
           style={{
             background: C.card,
             border: `1px solid ${C.cardBorder}`,
             borderRadius: 16,
-            padding: "20px 24px",
+            padding: "20px 20px",
           }}
         >
           <h3 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px", color: C.text }}>📈 Cumulative Revenue</h3>
-          <div style={{ height: 280 }}>
+          <div style={{ height: 280, width: "100%" }}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={revenue.revenueTimeline}>
                 <defs>
@@ -161,11 +162,11 @@ export function RevenueDashboard({
             background: C.card,
             border: `1px solid ${C.cardBorder}`,
             borderRadius: 16,
-            padding: "20px 24px",
+            padding: "20px 20px",
           }}
         >
           <h3 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px", color: C.text }}>📅 Daily Conversions</h3>
-          <div style={{ height: 280 }}>
+          <div style={{ height: 280, width: "100%" }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={revenue.revenueTimeline}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1a1a2e" />

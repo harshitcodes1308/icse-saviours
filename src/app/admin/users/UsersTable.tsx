@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const C = {
@@ -54,6 +54,14 @@ export function UsersTable({
     router.push(`/admin/users?${params.toString()}`);
   };
 
+  const handleFilterChange = (f: string) => {
+    setFilter(f);
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
+    if (f !== "all") params.set("filter", f);
+    router.push(`/admin/users?${params.toString()}`);
+  };
+
   const handleExportCSV = () => {
     const headers = ["Name", "Email", "Phone", "Plan", "Auth", "Joined", "Tests", "AI Calls", "Focus", "Notes", "Flip Streak"];
     const rows = users.map((u) => [
@@ -82,9 +90,10 @@ export function UsersTable({
   return (
     <div>
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
         <div>
           <h1
+            className="admin-page-title"
             style={{
               fontSize: 26,
               fontWeight: 800,
@@ -111,6 +120,7 @@ export function UsersTable({
             fontSize: 13,
             fontWeight: 700,
             cursor: "pointer",
+            whiteSpace: "nowrap",
           }}
         >
           📥 Export CSV
@@ -120,73 +130,69 @@ export function UsersTable({
       {/* Search & Filter */}
       <div
         style={{
-          display: "flex",
-          gap: 10,
           marginBottom: 20,
           background: C.card,
           border: `1px solid ${C.cardBorder}`,
           borderRadius: 12,
           padding: "12px 16px",
-          alignItems: "center",
         }}
       >
-        <input
-          type="text"
-          placeholder="Search by name or email..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          style={{
-            flex: 1,
-            background: C.surface,
-            border: `1px solid ${C.cardBorder}`,
-            borderRadius: 8,
-            padding: "8px 14px",
-            color: C.text,
-            fontSize: 13,
-            outline: "none",
-          }}
-        />
-        {(["all", "paid", "free", "phone"] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => {
-              setFilter(f);
-              const params = new URLSearchParams();
-              if (search) params.set("search", search);
-              if (f !== "all") params.set("filter", f);
-              router.push(`/admin/users?${params.toString()}`);
-            }}
+        <div className="admin-filter-bar">
+          <input
+            type="text"
+            placeholder="Search by name or email..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             style={{
-              padding: "8px 14px",
+              background: C.surface,
+              border: `1px solid ${C.cardBorder}`,
               borderRadius: 8,
-              border: filter === f ? `1px solid ${C.accent}50` : `1px solid ${C.cardBorder}`,
-              background: filter === f ? `${C.accent}18` : "transparent",
-              color: filter === f ? C.accent : C.textMid,
+              padding: "8px 14px",
+              color: C.text,
+              fontSize: 13,
+              outline: "none",
+            }}
+          />
+          <div className="admin-filter-buttons" style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {(["all", "paid", "free", "phone"] as const).map((f) => (
+              <button
+                key={f}
+                onClick={() => handleFilterChange(f)}
+                style={{
+                  padding: "8px 14px",
+                  borderRadius: 8,
+                  border: filter === f ? `1px solid ${C.accent}50` : `1px solid ${C.cardBorder}`,
+                  background: filter === f ? `${C.accent}18` : "transparent",
+                  color: filter === f ? C.accent : C.textMid,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  textTransform: "capitalize",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {f === "phone" ? "📱 Phone" : f}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={handleSearch}
+            style={{
+              padding: "8px 18px",
+              borderRadius: 8,
+              background: C.accent,
+              border: "none",
+              color: "#fff",
               fontSize: 12,
-              fontWeight: 600,
+              fontWeight: 700,
               cursor: "pointer",
-              textTransform: "capitalize",
+              whiteSpace: "nowrap",
             }}
           >
-            {f === "phone" ? "📱 Has Phone" : f}
+            Search
           </button>
-        ))}
-        <button
-          onClick={handleSearch}
-          style={{
-            padding: "8px 18px",
-            borderRadius: 8,
-            background: C.accent,
-            border: "none",
-            color: "#fff",
-            fontSize: 12,
-            fontWeight: 700,
-            cursor: "pointer",
-          }}
-        >
-          Search
-        </button>
+        </div>
       </div>
 
       {/* Table */}
@@ -198,8 +204,8 @@ export function UsersTable({
           overflow: "hidden",
         }}
       >
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <div className="admin-table-wrap">
+          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
             <thead>
               <tr style={{ background: C.surface }}>
                 {["Name", "Email", "Phone", "Plan", "Auth", "Joined", "Tests", "AI", "Focus", "Flip"].map((h) => (
@@ -233,9 +239,9 @@ export function UsersTable({
                   onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.02)")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                 >
-                  <td style={{ padding: "11px 14px", fontSize: 13, fontWeight: 600, color: C.text }}>{user.name}</td>
-                  <td style={{ padding: "11px 14px", fontSize: 12, color: C.textMid }}>{user.email}</td>
-                  <td style={{ padding: "11px 14px", fontSize: 12, color: user.phone ? C.text : C.textDim }}>
+                  <td style={{ padding: "11px 14px", fontSize: 13, fontWeight: 600, color: C.text, whiteSpace: "nowrap" }}>{user.name}</td>
+                  <td style={{ padding: "11px 14px", fontSize: 12, color: C.textMid, whiteSpace: "nowrap" }}>{user.email}</td>
+                  <td style={{ padding: "11px 14px", fontSize: 12, color: user.phone ? C.text : C.textDim, whiteSpace: "nowrap" }}>
                     {user.phone || "—"}
                   </td>
                   <td style={{ padding: "11px 14px" }}>
@@ -248,12 +254,13 @@ export function UsersTable({
                         background: user.isPaid ? `${C.green}18` : `${C.textDim}15`,
                         color: user.isPaid ? C.green : C.textDim,
                         border: `1px solid ${user.isPaid ? C.green : C.textDim}30`,
+                        whiteSpace: "nowrap",
                       }}
                     >
                       {user.isPaid ? "PAID" : "FREE"}
                     </span>
                   </td>
-                  <td style={{ padding: "11px 14px", fontSize: 11, color: C.textMid, textTransform: "capitalize" }}>
+                  <td style={{ padding: "11px 14px", fontSize: 11, color: C.textMid, textTransform: "capitalize", whiteSpace: "nowrap" }}>
                     {user.authProvider}
                   </td>
                   <td style={{ padding: "11px 14px", fontSize: 12, color: C.textMid, whiteSpace: "nowrap" }}>
