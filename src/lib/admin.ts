@@ -1,26 +1,7 @@
-import { getSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
 // ═══════════════════════════════════════════
-// ADMIN AUTH — Email Allowlist
-// ═══════════════════════════════════════════
-const ADMIN_EMAILS = [
-  "me.harshit1308@gmail.com",
-  "tripathiayush912@gmail.com",
-];
-
-export async function requireAdmin() {
-  const session = await getSession();
-  if (!session?.user) redirect("/login");
-  if (!ADMIN_EMAILS.includes(session.user.email.toLowerCase())) {
-    redirect("/dashboard");
-  }
-  return session.user;
-}
-
-// ═══════════════════════════════════════════
-// ADMIN DATA FETCHERS
+// ADMIN DATA FETCHERS (auth handled by layout)
 // ═══════════════════════════════════════════
 
 export async function getOverviewStats() {

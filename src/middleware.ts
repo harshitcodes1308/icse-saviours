@@ -4,7 +4,7 @@ import { jwtVerify } from 'jose';
 import { LOCKED_ROUTES } from '@/lib/tier-config';
 
 // Routes that require authentication
-const protectedRoutes = ['/dashboard', '/onboarding', '/admin'];
+const protectedRoutes = ['/dashboard', '/onboarding'];
 
 // Routes that should redirect to dashboard if authenticated
 const authRoutes = ['/login', '/signup'];
