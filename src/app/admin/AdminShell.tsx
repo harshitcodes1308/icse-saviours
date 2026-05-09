@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: "/admin/users", label: "Users", icon: "👥" },
   { href: "/admin/revenue", label: "Revenue", icon: "💰" },
   { href: "/admin/features", label: "Features", icon: "⚡" },
+  { href: "/admin/reviews", label: "Reviews", icon: "⭐" },
 ];
 
 const C = {
